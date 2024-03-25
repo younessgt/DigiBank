@@ -122,20 +122,12 @@ class Mongodb():
         user = self.get_user(user_email)
         receiver = self.get_user(receiver_email)
 
-        if not user:
+        if not user or not receiver:
 
-            return 'noUser'
-
-        if not receiver:
-            print('Reciever Not Found')
-            return 'noReceiver'
-
-        # checking if there is enough funds in api
-        # if user_account['balance'] < amount:
-        #     print('Not Enought funds')
+            return None
 
         withdrawal_mov = {'type': 'withdrawal', 'amount': -
-                          user_amount, 'reciever': receiver_email, 'date': datetime.now()}
+                          user_amount, 'receiver': receiver_email, 'date': datetime.now()}
         deposit_mov = {'type': 'deposit', 'amount': receiver_amount,
                        'sender': user_email, 'date': datetime.now()}
 
@@ -171,15 +163,15 @@ class Mongodb():
         except Exception as e:
             return {'error': e}
 
-    def get_movements(self, email):
+     def get_movements(self, user_id):
         ''' getting just the first 10 movements '''
 
-        user = User.objects(email=email).only('movements').first()
-        print(user.to_mongo().to_dict())
+        user = User.objects(id=user_id).only('movements').first()
+        
 
         if not user:
             return None
-        # print(user.to_mongo().to_dict())
+
         first_10_mov = user.movements[:10]
 
         if len(first_10_mov) == 0:
@@ -187,19 +179,19 @@ class Mongodb():
 
         return first_10_mov
 
-    def get_info_account(self, email):
+    def get_info_account(self, user_id):
         """ getting a precise user info 
 
         """
 
-        user_v1 = User.objects(email=email).only('username').first()
-        user_v2 = User.objects(email=email).only('account').first()
-        user_v3 = User.objects(email=email).only('currency').first()
+        user_v1 = User.objects(id=user_id).only('username').first()
+        user_v2 = User.objects(id=user_id).only('account').first()
+        user_v3 = User.objects(id=user_id).only('currency').first()
 
         if not user_v1 or not user_v2 or not user_v3:
             return None
 
-        first_10_mov = self.get_movements(email)
+        first_10_mov = self.get_movements(user_id)
 
         return {
             'username': user_v1.username,
@@ -207,3 +199,24 @@ class Mongodb():
             'account': user_v2.account,
             'movements': first_10_mov
         }
+        
+        
+     def check_user(self, email, password):
+        ''' checking user crendential when he want to login in '''
+        user = User.objects(email=email).first()
+
+        if not user:
+            return None
+
+        user_dict = user.to_mongo().to_dict()
+
+        hashedpassw = user_dict.get('hashed_password')
+        hashedpassw_byte = hashedpassw.encode('utf-8')
+        password_bytes = password.encode('utf-8')
+
+        if bcrypt.checkpw(password_bytes, hashedpassw_byte):
+            return user
+        else:
+            return None   
+        
+        

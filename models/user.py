@@ -1,6 +1,7 @@
 """ User model"""
 
 from datetime import datetime
+from flask_login import UserMixin
 from mongoengine import (
     Document,
     StringField,
@@ -11,7 +12,7 @@ from mongoengine import (
 )
 
 
-class User(Document):
+class User(UserMixin, Document):
     """User class to define a schema for the user """
 
     email = EmailField(required=True, unique=True)
