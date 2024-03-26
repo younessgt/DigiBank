@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="../static/images/icon.png"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../static/styles/home.css" />
+    <title>DigiBank</title>
+  </head>
+  <body>
+    <header class="header">
+      <nav class="nav">
+        <img
+          src="../static/images/logo.png"
+          alt="DigiBank logo"
+          class="nav__logo"
+          id="logo"
+        />
+        <ul class="nav__links">
+          <li class="nav__item">
+            <a class="nav__link" href="#section--1">Features</a>
+          </li>
+          <li class="nav__item">
+            <a class="nav__link" href="#section--2">services</a>
+          </li>
+          <li class="nav__item">
+            <a class="nav__link" href="#section--3">Testimonials</a>
+          </li>
+        </ul>
+        <div class="sign_in_up">
+          <ul class="nav2">
+            {% if not current_user.is_authenticated %}
+            <li class="nav__item2">
+              <a class="nav__link nav__link--btn2 btn--show-modal2" href="#"
+                >Sign in</a
+              >
+            </li>
+
+            <li class="nav__item3">
+              <a class="nav__link nav__link--btn btn--show-modal" href="#"
+                >Sign up</a
+              >
+            </li>
+            {% else %}
+            <li class="nav__item3">
+              <a class="nav__link nav__link--btn btn--show-modal3" href="/app"
+                >app</a
+              >
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </nav>
+
+      <div class="header__title">
+        <h1>
+          Embrace
+
+          <span">convenience</span>
+          with
+          <span class="highlight-1">DigiBank</span>
+        </h1>
+        <h4>Discover effortless banking tailored to your lifestyle</h4>
+        <button class="btn--text btn--scroll-to">Learn more &DownArrow;</button>
+        <img src="../static/images/header.png" class="header__img" alt="Bank" />
+      </div>
+    </header>
+
+    <section class="section" id="section--1">
+      <div class="section__title">
+        <h2 class="section__description">Features</h2>
+        <h3 class="section__header">Simplified Banking, Amplified Features.</h3>
+      </div>
+
+      <div class="features">
+        <img
+          src="../static/images/speed-lazy.png"
+          data-src="../static/images/speed.png"
+          alt="Computer"
+          class="features__img lazy-img"
+        />
+        <div class="features__feature">
+          <div class="features__icon">
+            <svg>
+              <use xlink:href="../static/images/icons.svg#icon-monitor"></use>
+            </svg>
+          </div>
+          <h5 class="features__header">An account in minutes</h5>
+          <p>
+            Dive into the world of DigiBank, where setting up your account is a
+            matter of minutes. Enjoy the freedom to manage your finances with a
+            suite of innovative tools at your fingertips. It's not just banking
+            — it's your financial hub, designed for the brisk pace of modern
+            life.
+          </p>
+        </div>
+
+        <div class="features__feature">
+          <div class="features__icon">
+            <svg>
+              <use
+                xlink:href="../static/images/icons.svg#icon-trending-up"
+              ></use>
+            </svg>
+          </div>
+          <h5 class="features__header">Manage your budget easily!</h5>
+          <p>
+            Stay on top of your finances with intuitive budgeting tools from
+            DigiBank. Simplify your savings and make informed decisions with a
+            clear view of your financial landscape. All within a few taps!
+          </p>
+        </div>
+        <img
+          src="../static/images/manage-lazy.jpg"
+          data-src="../static/images/manage.png"
+          alt="Plant Money"
+          class="features__img lazy-img"
+        />
+
+        <img
+          src="../static/images/card-lazy.jpg"
+          data-src="../static/images/card.webp"
+          alt="Credit card"
+          class="features__img lazy-img"
+        />
+        <div class="features__feature">
+          <div class="features__icon">
+            <svg>
+              <use
+                xlink:href="../static/images/icons.svg#icon-credit-card"
+              ></use>
+            </svg>
+          </div>
+          <h5 class="features__header">
+            We definitely have a free card made for you
+          </h5>
+          <p>
+            Discover financial freedom with DigiBank's personalized card,
+            crafted to fit your lifestyle. Designed to complement your financial
+            life, it's the perfect partner for everyday transactions and beyond.
+            Simple, effective, and absolutely cost-free.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="section--2">
+      <div class="section__title">
+        <h2 class="section__description">services</h2>
+        <h3 class="section__header">
+          Become a customer and take advantage of current services
+        </h3>
+      </div>
+
+      <div class="services">
+        <div class="services__tab-container">
+          <button
+            class="btn services__tab services__tab--1 services__tab--active"
+            data-tab="1"
+          >
+            <span>01</span>Fluid transactions
+          </button>
+          <button class="btn services__tab services__tab--2" data-tab="2">
+            <span>02</span> Instant credit
+          </button>
+          <button class="btn services__tab services__tab--3" data-tab="3">
+            <span>03</span>Immediate closure
+          </button>
+        </div>
+        <div
+          class="services__content services__content--1 services__content--active"
+        >
+          <div class="services__icon services__icon--1">
+            <svg>
+              <use xlink:href="../static/images/icons.svg#icon-upload"></use>
+            </svg>
+          </div>
+          <h5 class="services__header">
+            Enjoy the simplicity and speed of moving money instantly with
+            DigiBank.
+          </h5>
+          <p>
+            With Digibank's Instant Transfers, you're always just a few seconds
+            away from moving your money where you need it. Whether it's paying a
+            friend back for dinner or transferring funds to another account, our
+            real-time service ensures your money is always on the move, just
+            like you
+          </p>
+        </div>
+
+        <div class="services__content services__content--2">
+          <div class="services__icon services__icon--2">
+            <svg>
+              <use xlink:href="../static/images/icons.svg#icon-home"></use>
+            </svg>
+          </div>
+          <h5 class="services__header">Quick Funds When You Need Them</h5>
+          <p>
+            Life's unexpected moments don't have to be financial burdens.
+            Digibank's instant loans provide a swift financial boost with
+            competitive rates and flexible terms. Apply in minutes, receive
+            funds rapidly, and turn those big plans into reality without
+            skipping a beat.
+          </p>
+        </div>
+        <div class="services__content services__content--3">
+          <div class="services__icon services__icon--3">
+            <svg>
+              <use xlink:href="../static/images/icons.svg#icon-user-x"></use>
+            </svg>
+          </div>
+          <h5 class="services__header">
+            Close Your Account Effortlessly When It's Time to Move On
+          </h5>
+          <p>
+            With Digibank, you have the power to open or close accounts on
+            demand. With control at your fingertips, you're in charge of your
+            financial journey every step of the way.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="section--3">
+      <div class="section__title section__title--testimonials">
+        <h2 class="section__description">Why choose us?</h2>
+        <h3 class="section__header">More than 800,000 customers trust us.</h3>
+      </div>
+
+      <div class="slider">
+        <div class="slide slide--1 slide--hidden">
+          <div class="testimonial">
+            <h5 class="testimonial__header">
+              Transformed My Banking Experience!
+            </h5>
+            <blockquote class="testimonial__text">
+              Switching to Digibank was like stepping into the future of
+              finance. The ease of use, exceptional customer service, and
+              innovative features have not only saved me time but also given me
+              full control over my financial health.
+            </blockquote>
+            <address class="testimonial__author">
+              <img
+                src="../static/images/user-1.png"
+                alt=""
+                class="testimonial__photo"
+              />
+              <h6 class="testimonial__name">Myriam Delebois</h6>
+              <p class="testimonial__location">Bordeaux, France</p>
+            </address>
+          </div>
+        </div>
+
+        <div class="slide slide--2 slide--hidden">
+          <div class="testimonial">
+            <h5 class="testimonial__header">Unmatched Convenience!</h5>
+            <blockquote class="testimonial__text">
+              I never knew managing my money could be so effortless until I
+              discovered DigiBank. The intuitive design and instant services
+              have made banking something I actually look forward to. This is
+              how banking should always have been.
+            </blockquote>
+            <address class="testimonial__author">
+              <img
+                src="../static/images/user-2.png"
+                alt=""
+                class="testimonial__photo"
+              />
+              <h6 class="testimonial__name">Jean Balzak</h6>
+              <p class="testimonial__location">Nice, France</p>
+            </address>
+          </div>
+        </div>
+
+        <div class="slide slide--3 slide--hidden">
+          <div class="testimonial">
+            <h5 class="testimonial__header">
+              A Trustworthy Financial Partner!
+            </h5>
+            <blockquote class="testimonial__text">
+              From the moment I started using DigiBank, I felt like I had a
+              financial ally. Everything from setting up my account to getting a
+              loan was straightforward and transparent. They've earned my trust,
+              and that's priceless.
+            </blockquote>
+            <address class="testimonial__author">
+              <img
+                src="../static/images/user-3.png"
+                alt=""
+                class="testimonial__photo"
+              />
+              <h6 class="testimonial__name">Somir Kalina</h6>
+              <p class="testimonial__location">Madrid, Spain</p>
+            </address>
+          </div>
+        </div>
+
+        <button class="slider__btn slider__btn--left">&larr;</button>
+        <button class="slider__btn slider__btn--right">&rarr;</button>
+        <div class="dots"></div>
+      </div>
+    </section>
+
+    <section class="section section--sign-up">
+      <div class="section__title">
+        <h3 class="section__header">
+          DigiBank, a bank alongside individuals and professionals
+        </h3>
+      </div>
+      {% if not current_user.is_authenticated %}
+      <button class="btn btn--show-modal">
+        Still waiting! Open your account!
+      </button>
+      {% else %}
+      <a class="btnf" href="/app"> Open your app </a>
+      {% endif %}
+    </section>
+
+    <footer class="footer">
+      <ul class="footer__nav">
+        <li class="footer__item">
+          <a class="footer__link" href="#">About</a>
+        </li>
+        <li class="footer__item">
+          <a class="footer__link" href="#">Terms of Use</a>
+        </li>
+        <li class="footer__item">
+          <a class="footer__link" href="#">Privacy Policy</a>
+        </li>
+        <li class="footer__item">
+          <a class="footer__link" href="#">Careers</a>
+        </li>
+        <li class="footer__item">
+          <a class="footer__link" href="#">Blog</a>
+        </li>
+        <li class="footer__item">
+          <a class="footer__link" href="#">Contact Us</a>
+        </li>
+      </ul>
+      <img src="../static/images/icon.png" alt="Logo" class="footer__logo" />
+      <p class="footer__copyright">
+        &copy; Copyright by
+        <a
+          class="footer__link twitter-link"
+          target="_blank"
+          href="https://twitter.com/YounessMx"
+          >Youness Merzak</a
+        >,
+        <a
+          class="footer__link twitter-link"
+          target="_blank"
+          href="https://www.linkedin.com/in/leila-merzak-797701197/"
+          >Leila Merzak</a
+        >.
+      </p>
+    </footer>
+
+    <div class="modal hidden">
+      <button class="btn--close-modal">&times;</button>
+      <h2 class="modal__header">
+        Open your account <br />
+        in  <span class="highlight-1">minutes</span>
+      </h2>
+      <div id="signupError" class="flash__email" style="display: none"></div>
+      <form action="/signup" method="post" class="modal__form signup--form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <label for="email">Email</label>
+        <input type="email" id="signup-email" name="email" required />
+        <label for="username">Username:</label>
+        <input type="text" id="signup-username" name="username" required />
+        <label for="password">Password:</label>
+        <input type="password" id="signup-password" name="password" required />
+        <label for="password">Re-enter Password:</label>
+        <input
+          type="password"
+          id="signup-password2"
+          name="re-password"
+          required
+        />
+        <label for="currency">Currency:</label>
+        <select id="currency" name="currency" required>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+        </select>
+        <button class="sgubtn">Sign up &rarr;</button>
+      </form>
+    </div>
+
+    <div class="modal2 hidden">
+      <button class="btn--close-modal2">&times;</button>
+      <h2 class="modal__header">
+        Already
+        <span class="highlight-1">registered?</span>
+      </h2>
+
+      <div id="loginError" class="flash__email" style="display: none"></div>
+      <form action="/login" method="post" class="modal__form login--form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <label for="email">Email</label>
+        <input type="email" id="signin-email" name="email" required />
+        <label for="password">Password:</label>
+        <input type="password" id="signin-password" name="password" required />
+        <button class="sgibtn">Sign in &rarr;</button>
+      </form>
+    </div>
+
+    <div class="overlay hidden"></div>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script src="../static/scripts/home.js"></script>
+  </body>
+</html>
