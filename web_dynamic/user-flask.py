@@ -88,6 +88,27 @@ def signup():
 
     return jsonify({'success': True})
 
+@app.route('/token', methods=['GET'], strict_slashes=False)
+def token():
+    ''' returning a token if the current user doesn't owns one yet'''
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User not authenticated.'}), 401
+    
+    
+    user_id = current_user.id
+    key = f'user_{user_id}'
+
+    
+    user_token = rd.get(key)
+    if user_token is None:
+        user_token = str(uuid.uuid4())
+        
+        rd.set(key, user_token, 36000)
+        rd.set(f'auth_{user_token}', user_token, 36000)
+        rd.set(f"token_to_user_{user_token}", str(user_id), 36000)
+    
+    return jsonify({'token': user_token}), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

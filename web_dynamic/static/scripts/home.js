@@ -26,7 +26,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const leftBtnSlide = document.querySelector('.slider__btn--left');
 
-   // const h2Element = document.querySelector('.modal2 .modal__header');
+  const signinBtn = document.querySelector('.sgibtn');
+  const signupBtn = document.querySelector('.sgubtn');
+  const signinEmail = document.getElementById('signin-email');
+  const signinPassword = document.getElementById('signin-password');
+
+  // const h2Element = document.querySelector('.modal2 .modal__header');
 
   // open modal function
   const openModal = function (e) {
@@ -263,4 +268,59 @@ document.addEventListener('DOMContentLoaded', function () {
     switchSlide(currentSlide);
   });
 
+  // sign in
+
+  const loginForm = document.querySelector('.login--form');
+  const loginError = document.getElementById('loginError');
+
+  loginForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(loginForm);
+
+    fetch('http://127.0.0.1:5000/login', {
+      method: 'POST',
+      body: formData,
+    })
+      .then((resp) => resp.json())
+      .then((data) => {
+        if (!data.success) {
+          loginError.textContent = data.message;
+          loginError.style.display = 'block';
+        } else {
+          window.location.href = '/app';
+        }
+      })
+      .catch((error) => console.error('Error:', error));
+  });
+
+  // sign up
+
+  const signupForm = document.querySelector('.signup--form');
+  const signupError = document.getElementById('signupError');
+  signupForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(signupForm);
+
+    fetch('http://127.0.0.1:5000/signup', {
+      method: 'POST',
+      body: formData,
+    })
+      .then((resp) => resp.json())
+      .then((data) => {
+        if (!data.success) {
+          signupError.textContent = data.message;
+          signupError.style.display = 'block';
+        } else {
+          closeModal();
+          modal2.classList.remove('hidden');
+          overlay.classList.remove('hidden');
+          loginError.textContent = 'User registered successfully!';
+          loginError.style.display = 'block';
+          loginError.style.color = 'green';
+        }
+      })
+      .catch((error) => console.error('Error:', error));
+  });
 });
