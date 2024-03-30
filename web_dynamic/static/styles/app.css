@@ -171,6 +171,10 @@ nav {
   background-image: linear-gradient(to top left, #e0656b, rgb(209, 117, 122));
 }
 
+.operation--token {
+  background-image: linear-gradient(to top left, #4c5ce9, #3d91df);
+}
+
 h2 {
   margin-bottom: 1.5rem;
   font-size: 1.7rem;
@@ -358,4 +362,11 @@ h2 {
   /* margin-left: 10px; */
   margin-top: -16px;
   margin-bottom: 5px;
+}
+
+.form.form--token {
+  grid-template-columns: 2fr 2fr;
+}
+.form__label--token {
+  grid-row: 2;
 }
