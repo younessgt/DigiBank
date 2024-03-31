@@ -1,6 +1,5 @@
 ''' Mongodb model'''
 import bcrypt
-from os import getenv
 from mongoengine import connect
 from pymongo.errors import ConnectionFailure
 from models.user import User
@@ -12,7 +11,6 @@ class Mongodb():
 
     def __init__(self):
         ''' constructor '''
-        # self.db = 'getenv('DB')'
         self.db = 'bank'
         try:
             self.connection = connect(
@@ -59,7 +57,6 @@ class Mongodb():
         try:
 
             user.save()
-            # print(user.to_mongo().to_dict())
         except Exception as e:
             print(f"Error saving user: {e}")
 
@@ -96,7 +93,8 @@ class Mongodb():
 
         return user
 
-    def update_user_balance(self, user_email, receiver_email, user_amount, receiver_amount):
+    def update_user_balance(self, user_email,
+                            receiver_email, user_amount, receiver_amount):
         ''' updating the user and the receiver account balance '''
 
         user = self.get_user(user_email)
@@ -116,7 +114,9 @@ class Mongodb():
         user.save()
         receiver.save()
 
-    def update_mouvement_transfer(self, user_email, receiver_email, user_amount, receiver_amount):
+    def update_mouvement_transfer(self, user_email,
+                                  receiver_email,
+                                  user_amount, receiver_amount):
         ''' updation the movement when a user make a transfer'''
 
         user = self.get_user(user_email)
@@ -127,7 +127,8 @@ class Mongodb():
             return None
 
         withdrawal_mov = {'type': 'withdrawal', 'amount': -
-                          user_amount, 'receiver': receiver_email, 'date': datetime.now()}
+                          user_amount, 'receiver': receiver_email,
+                          'date': datetime.now()}
         deposit_mov = {'type': 'deposit', 'amount': receiver_amount,
                        'sender': user_email, 'date': datetime.now()}
 
@@ -163,11 +164,10 @@ class Mongodb():
         except Exception as e:
             return {'error': e}
 
-     def get_movements(self, user_id):
+    def get_movements(self, user_id):
         ''' getting just the first 10 movements '''
 
         user = User.objects(id=user_id).only('movements').first()
-        
 
         if not user:
             return None
@@ -180,7 +180,7 @@ class Mongodb():
         return first_10_mov
 
     def get_info_account(self, user_id):
-        """ getting a precise user info 
+        """ getting a precise user info
 
         """
 
@@ -199,9 +199,8 @@ class Mongodb():
             'account': user_v2.account,
             'movements': first_10_mov
         }
-        
-        
-     def check_user(self, email, password):
+
+    def check_user(self, email, password):
         ''' checking user crendential when he want to login in '''
         user = User.objects(email=email).first()
 
@@ -217,6 +216,4 @@ class Mongodb():
         if bcrypt.checkpw(password_bytes, hashedpassw_byte):
             return user
         else:
-            return None   
-        
-        
+            return None

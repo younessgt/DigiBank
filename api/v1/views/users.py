@@ -8,18 +8,18 @@ from functools import wraps
 
 def request_made(token):
     ''' method that check for number of request'''
-    
+
     limit_key = f'limit_{token}'
     number_request = rd.get(limit_key)
     if number_request and int(number_request) >= 10:
         return False
-        
+
     if not number_request and token is not None:
         rd.set(limit_key, 1)
     if number_request and token is not None:
         rd.incr(limit_key)
     return True
-                
+
 
 def token_or_login_required(f):
     @wraps(f)
@@ -52,44 +52,38 @@ def get_some_user_infos():
     if infos is None:
         return jsonify({'error': "Unauthorized"}), 401
 
-
     if len(infos.get('movements', [])) != 0:
         formatted_movements = [
             {**mov, 'date': mov['date'].isoformat() + 'Z'}
             for mov in infos['movements']
         ]
 
-
         infos['movements'] = formatted_movements
     return jsonify(infos)
-
 
 
 @app_views.route('/transfer', methods=['POST'], strict_slashes=False)
 def transfer_funds():
     ''' transferring funds from user account to another account'''
-    
+
     if not current_user.is_authenticated:
         return jsonify({'error': 'Unauthorized'}), 401
-    
 
     user_email = current_user.email
     receiver_email = request.form.get('receiver-email').lower()
-    
+
     if user_email == receiver_email:
         return jsonify({'success': False, 'user': True}), 401
-    
+
     user_amount = int(request.form.get('amount'))
-    
 
     receiver = db.get_user(receiver_email)
 
-
     user_currency = current_user.currency
-     
+
     if not receiver:
         return jsonify({'success': False, 'user': False}), 401
-    
+
     receiver_currency = receiver.currency
 
     receiver_amount = user_amount
@@ -110,16 +104,13 @@ def transfer_funds():
 def loan():
     ''' processing the loan '''
 
-    
     if not current_user.is_authenticated:
         return jsonify({'error': "Unauthorized"}), 401
-    
+
     email = current_user.email
     amount = int(request.form.get('amount'))
-    
 
     loan_mov = db.update_mouvement_loan(email, amount)
-
 
     if 'error' in loan_mov:
         return jsonify({'error': loan_mov['error']}), 400
@@ -137,16 +128,14 @@ def delete():
     user_email = current_user.email
     email = request.form.get('user-email').lower()
     password = request.form.get('password')
-    
+
     if user_email != email:
         return jsonify({'success': False}), 401
 
     account_status = db.delete_user(email, password)
-    
 
     if account_status is None:
         return jsonify({'success': False}), 401
-
 
     return jsonify(account_status), 200
 
@@ -155,20 +144,14 @@ def delete():
 @token_or_login_required
 def all_movement():
     ''' retreiving all user mouvements'''
-    
     user_id = getattr(g, 'user_id', None)
- 
-    
     if user_id is None:
         return jsonify({'error': "Unauthorized"}), 401
-        
     user = User.objects(id=user_id).first()
     movements = user.movements
     username = user.username
     id_usr = str(user.id)
-    
     obj = {'username': username, 'id': id_usr, 'movements': movements}
-    
     return jsonify(obj), 200
 
 
@@ -176,10 +159,8 @@ def all_movement():
 @token_or_login_required
 def get_user_infos():
     ''' retreving a user movements '''
-    
     user_id = getattr(g, 'user_id', None)
 
-    
     if user_id is None:
         return jsonify({'error': "Unauthorized"}), 401
 
@@ -188,7 +169,6 @@ def get_user_infos():
     if infos is None:
         return jsonify({'error': "Unauthorized"}), 401
 
-   
     if len(infos.get('movements', [])) != 0:
         formatted_movements = [
             {**mov, 'date': mov['date'].isoformat() + 'Z'}

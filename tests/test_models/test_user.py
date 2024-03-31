@@ -59,4 +59,3 @@ class UserTestCase(unittest.TestCase):
         user.save()
 
         self.assertTrue(isinstance(user.created_at, datetime))
-

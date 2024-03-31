@@ -2,9 +2,22 @@ import os
 import uuid
 import random
 import string
-from flask import Flask, render_template, request, redirect, url_for, jsonify, session
+from flask import (
+    Flask,
+    render_template,
+    request, redirect,
+    url_for,
+    jsonify,
+    session
+)
 from models import db, rd
-from flask_login import login_user, LoginManager, logout_user, login_required, current_user
+from flask_login import (
+    login_user,
+    LoginManager,
+    logout_user,
+    login_required,
+    current_user
+)
 from models.user import User
 from flask_wtf.csrf import CSRFProtect
 from flask_oauthlib.client import OAuth
@@ -39,6 +52,7 @@ google = oauth.remote_app(
     authorize_url='https://accounts.google.com/o/oauth2/auth',
 )
 
+
 @login_manager.user_loader
 def load_user(user_id):
     """ callback used to reload the user
@@ -70,16 +84,17 @@ def login():
         email = email.lower()
 
     user = db.check_user(email, password)
-    
     if user and user.account['status'] == 'active':
         login_user(user)
         return jsonify({'success': True})
 
     elif user and user.account['status'] == 'inactive':
-        return jsonify({'success': False, 'message': 'Account is desactivated'})
+        return jsonify({'success': False,
+                        'message': 'Account is desactivated'})
     else:
 
-        return jsonify({'success': False, 'message': 'Invalid username or password'})
+        return jsonify({'success': False,
+                        'message': 'Invalid username or password'})
 
 
 @app.route('/logout')
@@ -101,14 +116,16 @@ def signup():
     currency = request.form.get('currency')
 
     if password != re_password:
-        return jsonify({'success': False, 'message': 'Passwords do not match!'})
+        return jsonify({'success': False,
+                        'message': 'Passwords do not match!'})
 
     msg = db.create_user(email, password, username, currency)
 
     if msg == 'email_exist':
         return jsonify({'success': False, 'message': 'Email already exists'})
     if msg == 'username_exist':
-        return jsonify({'success': False, 'message': 'Username already exists'})
+        return jsonify({'success': False,
+                        'message': 'Username already exists'})
 
     return jsonify({'success': True})
 
@@ -118,46 +135,44 @@ def token():
     ''' returning a token if the current user doesn't owns one yet'''
     if not current_user.is_authenticated:
         return jsonify({'error': 'User not authenticated.'}), 401
-    
-    
     user_id = current_user.id
     key = f'user_{user_id}'
 
-    
     user_token = rd.get(key)
     if user_token is None:
         user_token = str(uuid.uuid4())
-        
         rd.set(key, user_token, 36000)
         rd.set(f'auth_{user_token}', user_token, 36000)
         rd.set(f"token_to_user_{user_token}", str(user_id), 36000)
-    
     return jsonify({'token': user_token}), 200
 
 
 @app.route('/google-login')
 def google_login():
     """Initiates the Google OAuth authentication flow"""
-    return google.authorize(callback=url_for('google_authorized', _external=True))
+    return google.authorize(
+        callback=url_for('google_authorized', _external=True))
 
 
-# /callback is setup in google cloud in Authorized redirect URIs 'http://127.0.0.1:5000/callback'
+# /callback is setup in google cloud in Authorized redirect
+# URIs 'http://127.0.0.1:5000/callback'
 @app.route('/callback')
 def google_authorized():
-    """Handles the callback from Google OAuth after the user grants authorization"""
+    """Handles the callback from Google OAuth
+    after the user grants authorization"""
     resp = google.authorized_response()
-
     if resp is None or resp.get('access_token') is None:
-        return jsonify({'success': False, 'message': 'Access denied: reason=%s error=%s' % (
-            request.args['error_reason'],
-            request.args['error_description']
-        )})
+        return jsonify({
+            'success': False,
+            'message': 'Access denied: reason=%s error=%s' % (
+                request.args['error_reason'],
+                request.args['error_description']
+            )
+        })
 
     session['google_token'] = (resp['access_token'], '')
-    
     user_info = google.get('userinfo')
     user_email = user_info.data['email']
-    
 
     user = db.get_user(user_email)
     if user is None:
@@ -169,6 +184,7 @@ def google_authorized():
     login_user(user)
     return redirect(url_for('home'))
 
+
 @google.tokengetter
 def get_google_oauth_token():
     """ Retrieves the OAuth token associated with
@@ -176,6 +192,7 @@ def get_google_oauth_token():
     flask session.
     """
     return session.get('google_token')
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
