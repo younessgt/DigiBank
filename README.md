@@ -4,7 +4,7 @@
 DigiBank is an online banking web application designed to emulate the core functionalities of a bank's online service. Our application offers users the ability to manage their finances conveniently through the web.  DigiBank provides a secure, intuitive platform for a variety of banking activities, all accessible from the comfort of your home or office.
 
 ## The Solution Architecture
-![](architecture.PNG)
+![](architecture.png)
 
 ## Environment Setup
 
@@ -114,8 +114,8 @@ Navigate through DigiBank application to know more about it's services with an e
 
 - Routes that can be tested by the client:
 
-api/v1/infos : require authorisation using token to access user informations.
-api/v1/all/movements :  require authorisation using token to access user movements.
+. api/v1/infos : require authorisation using token to access user informations.
+. api/v1/all/movements :  require authorisation using token to access user movements.
 
 ## License
 
