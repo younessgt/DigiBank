@@ -114,8 +114,8 @@ Navigate through DigiBank application to know more about it's services with an e
 
 - Routes that can be tested by the client:
 
-. api/v1/infos : require authorisation using token to access user informations.
-. api/v1/all/movements :  require authorisation using token to access user movements.
+      1. api/v1/infos : require authorisation using token to access user informations.
+      2. api/v1/all/movements :  require authorisation using token to access user movements.
 
 ## License
 
