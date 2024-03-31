@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const formTransfer = document.querySelector(".form--transfer");
   const formLoan = document.querySelector(".form--loan");
   const formClose = document.querySelector(".form--close");
+  const formToken = document.querySelector(".form--token");
 
   const account = {
     username: "",
@@ -356,4 +357,27 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.addEventListener("click", resetTimer);
   }, 1000);
   resetTimer();
+
+  // performing Token operation
+  const inputToken = document.querySelector(".form__input--token-value");
+  formToken.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    fetch("http://127.0.0.1:5000/token", {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((response) => {
+        if (response.status !== 200) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data) {
+          inputToken.value = data.token;
+        }
+      })
+      .catch((error) => console.error("problem with fetch operation:", error));
+  });
 });
