@@ -54,7 +54,7 @@
             {% else %}
             <li class="nav__item3">
               <a class="nav__link nav__link--btn btn--show-modal3" href="/app"
-                >app</a
+                >App</a
               >
             </li>
             {% endif %}
@@ -403,8 +403,16 @@
         <span class="highlight-1">registered?</span>
       </h2>
 
+
+      <div class="google-auth-wrapper">
+        <a href="/google-login" class="btn-google-auth">
+          <img src="../static/images/google-logo.png" alt="Google logo" class="img__google"> Continue with Google
+        </a>
+      </div>
+
       <div id="loginError" class="flash__email" style="display: none"></div>
       <form action="/login" method="post" class="modal__form login--form">
+        
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <label for="email">Email</label>
         <input type="email" id="signin-email" name="email" required />

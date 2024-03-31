@@ -682,3 +682,37 @@ h4 {
   position: relative;
   color: #617c83;
 }
+
+.btn-google-auth {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  color: #757575;
+  font-size: 1.6rem;
+  padding: 10px 20px;
+  margin-bottom: 2rem;
+  border: 1px solid #ddd;
+  border-radius: 2rem;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.btn-google-auth:hover,
+.btn-google-auth:focus {
+  background-color: #f5f5f5;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+}
+
+.btn-google-auth img {
+  margin-right: 1rem;
+}
+
+.img__google {
+  width: 20px;
+}
+
+.google-auth-wrapper {
+  padding: 0px 75px;
+}

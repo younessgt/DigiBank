@@ -1,106 +1,99 @@
-'use strict';
+"use strict";
 
-document.addEventListener('DOMContentLoaded', function () {
-  const modal = document.querySelector('.modal');
-  const modal2 = document.querySelector('.modal2');
+document.addEventListener("DOMContentLoaded", function () {
+  const modal = document.querySelector(".modal");
+  const modal2 = document.querySelector(".modal2");
 
-  const overlay = document.querySelector('.overlay');
-  const btnCloseModal = document.querySelector('.btn--close-modal');
-  const btnCloseModal2 = document.querySelector('.btn--close-modal2');
+  const overlay = document.querySelector(".overlay");
+  const btnCloseModal = document.querySelector(".btn--close-modal");
+  const btnCloseModal2 = document.querySelector(".btn--close-modal2");
 
-  const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
-  const btnsOpenModal2 = document.querySelectorAll('.btn--show-modal2');
+  const btnsOpenModal = document.querySelectorAll(".btn--show-modal");
+  const btnsOpenModal2 = document.querySelectorAll(".btn--show-modal2");
 
-  const btnLearnMore = document.querySelector('.btn--scroll-to');
-  const section1 = document.querySelector('#section--1');
+  const btnLearnMore = document.querySelector(".btn--scroll-to");
+  const section1 = document.querySelector("#section--1");
 
-  const servicesBtn = document.querySelectorAll('.services__tab');
-  const servicesContent = document.querySelectorAll('.services__content');
+  const servicesBtn = document.querySelectorAll(".services__tab");
+  const servicesContent = document.querySelectorAll(".services__content");
   const servicesBtnContainer = document.querySelector(
-    '.services__tab-container'
+    ".services__tab-container"
   );
 
-  const header = document.querySelector('.header');
+  const header = document.querySelector(".header");
 
-  const rightBtnSlide = document.querySelector('.slider__btn--right');
+  const rightBtnSlide = document.querySelector(".slider__btn--right");
 
-  const leftBtnSlide = document.querySelector('.slider__btn--left');
-
-  const signinBtn = document.querySelector('.sgibtn');
-  const signupBtn = document.querySelector('.sgubtn');
-  const signinEmail = document.getElementById('signin-email');
-  const signinPassword = document.getElementById('signin-password');
-
-  // const h2Element = document.querySelector('.modal2 .modal__header');
+  const leftBtnSlide = document.querySelector(".slider__btn--left");
 
   // open modal function
   const openModal = function (e) {
     e.preventDefault();
-    modal.classList.remove('hidden');
-    overlay.classList.remove('hidden');
+    modal.classList.remove("hidden");
+    overlay.classList.remove("hidden");
   };
 
   // close modal function (sign up )
   const closeModal = function () {
-    modal.classList.add('hidden');
-    overlay.classList.add('hidden');
+    modal.classList.add("hidden");
+    overlay.classList.add("hidden");
   };
 
   const openModal2 = function (e) {
     e.preventDefault();
-    modal2.classList.remove('hidden');
-    overlay.classList.remove('hidden');
+    modal2.classList.remove("hidden");
+    overlay.classList.remove("hidden");
   };
 
   // close modal function (login)
   const closeModal2 = function () {
-    modal2.classList.add('hidden');
-    overlay.classList.add('hidden');
+    modal2.classList.add("hidden");
+    overlay.classList.add("hidden");
   };
 
-  btnsOpenModal.forEach((btn) => btn.addEventListener('click', openModal));
-  btnsOpenModal2.forEach((btn) => btn.addEventListener('click', openModal2));
+  btnsOpenModal.forEach((btn) => btn.addEventListener("click", openModal));
+  btnsOpenModal2.forEach((btn) => btn.addEventListener("click", openModal2));
 
   // handling close modal
-  btnCloseModal.addEventListener('click', closeModal);
-  btnCloseModal2.addEventListener('click', closeModal2);
+  btnCloseModal.addEventListener("click", closeModal);
+  btnCloseModal2.addEventListener("click", closeModal2);
 
-  overlay.addEventListener('click', closeModal);
-  overlay.addEventListener('click', closeModal2);
+  overlay.addEventListener("click", closeModal);
+  overlay.addEventListener("click", closeModal2);
 
   // handle escape btn to close the model
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !modal.classList.contains("hidden")) {
       closeModal();
     }
   });
 
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && !modal2.classList.contains('hidden')) {
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !modal2.classList.contains("hidden")) {
       closeModal();
     }
   });
 
   // scrolling
-  btnLearnMore.addEventListener('click', function () {
-    section1.scrollIntoView({ behavior: 'smooth' });
+  btnLearnMore.addEventListener("click", function () {
+    section1.scrollIntoView({ behavior: "smooth" });
   });
 
   // smooth scrolling for the features
   // using event delegation
 
-  document.querySelector('.nav__links').addEventListener('click', function (e) {
+  document.querySelector(".nav__links").addEventListener("click", function (e) {
     e.preventDefault();
     // console.log(e.target);
     // console.log(e.currentTarget);
 
-    if (e.target.classList.contains('nav__link')) {
-      const id = e.target.getAttribute('href');
+    if (e.target.classList.contains("nav__link")) {
+      const id = e.target.getAttribute("href");
 
       // prevent the login and sign up buttons by checking id !== '#'
-      if (id !== '#') {
+      if (id !== "#") {
         document.querySelector(id).scrollIntoView({
-          behavior: 'smooth',
+          behavior: "smooth",
         });
       }
     }
@@ -109,44 +102,44 @@ document.addEventListener('DOMContentLoaded', function () {
   // service part
 
   // event delegation
-  servicesBtnContainer.addEventListener('click', function (e) {
-    if (!e.target.classList.contains('services__tab-container')) {
+  servicesBtnContainer.addEventListener("click", function (e) {
+    if (!e.target.classList.contains("services__tab-container")) {
       // prevent span element  inside the button from been the target
-      const clikedBtn = e.target.closest('.services__tab');
+      const clikedBtn = e.target.closest(".services__tab");
 
       // remove from all btns the class : services__tab--active to prevent the transform
 
       servicesBtn.forEach((btn) => {
-        btn.classList.remove('services__tab--active');
+        btn.classList.remove("services__tab--active");
       });
 
       // transform activated
-      clikedBtn.classList.add('services__tab--active');
+      clikedBtn.classList.add("services__tab--active");
 
       // activating the content of the clicked btn
 
       const btnNumber = clikedBtn.dataset.tab;
 
       servicesContent.forEach((content) => {
-        content.classList.remove('services__content--active');
+        content.classList.remove("services__content--active");
       });
 
       const currentContent = document.querySelector(
         `.services__content--${btnNumber}`
       );
 
-      currentContent.classList.add('services__content--active');
+      currentContent.classList.add("services__content--active");
     }
   });
 
   // animate the menu
 
-  const nav = document.querySelector('.nav');
+  const nav = document.querySelector(".nav");
   // console.log(nav);
 
   const hoverMenu = function (e) {
-    if (e.target.classList.contains('nav__link')) {
-      const siblings = e.target.closest('.nav').querySelectorAll('.nav__link');
+    if (e.target.classList.contains("nav__link")) {
+      const siblings = e.target.closest(".nav").querySelectorAll(".nav__link");
 
       siblings.forEach((element) => {
         if (element !== e.target) {
@@ -156,9 +149,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   };
 
-  nav.addEventListener('mouseover', hoverMenu.bind(0.5));
+  nav.addEventListener("mouseover", hoverMenu.bind(0.5));
 
-  nav.addEventListener('mouseout', hoverMenu.bind(1));
+  nav.addEventListener("mouseout", hoverMenu.bind(1));
 
   // fixing nav when  scrolling on a precise position
 
@@ -168,9 +161,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const [entry] = entries;
     // console.log(entry);
     if (!entry.isIntersecting) {
-      nav.classList.add('fixnav');
+      nav.classList.add("fixnav");
     } else {
-      nav.classList.remove('fixnav');
+      nav.classList.remove("fixnav");
     }
   };
 
@@ -187,21 +180,21 @@ document.addEventListener('DOMContentLoaded', function () {
   // section animation
 
   const An = ScrollReveal({
-    distance: '70px',
+    distance: "70px",
     duration: 2000,
     delay: 400,
     reset: true,
   });
 
-  An.reveal('.header__title', { delay: 300, origin: 'left' });
+  An.reveal(".header__title", { delay: 300, origin: "left" });
 
-  An.reveal('.header__title h4', { delay: 300, origin: 'left' });
-  An.reveal('.header__title .btn--text', { delay: 300, origin: 'left' });
-  An.reveal('.section', { delay: 400, origin: 'bottom' });
+  An.reveal(".header__title h4", { delay: 300, origin: "left" });
+  An.reveal(".header__title .btn--text", { delay: 300, origin: "left" });
+  An.reveal(".section", { delay: 400, origin: "bottom" });
 
   // load images
 
-  const allLazyImages = document.querySelectorAll('img[data-src]');
+  const allLazyImages = document.querySelectorAll("img[data-src]");
 
   const imageCallback = function (entries, observer) {
     const [entry] = entries;
@@ -214,8 +207,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // making sure that the new image is full loaded
 
-    entry.target.addEventListener('load', function () {
-      entry.target.classList.remove('lazy-img');
+    entry.target.addEventListener("load", function () {
+      entry.target.classList.remove("lazy-img");
     });
 
     observer.unobserve(entry.target);
@@ -223,14 +216,14 @@ document.addEventListener('DOMContentLoaded', function () {
   const imageObserver = new IntersectionObserver(imageCallback, {
     root: null,
     threshold: 0,
-    rootMargin: '300px',
+    rootMargin: "300px",
   });
 
   allLazyImages.forEach((img) => imageObserver.observe(img));
 
   // slide part
 
-  const allSlides = document.querySelectorAll('.slide');
+  const allSlides = document.querySelectorAll(".slide");
 
   let currentSlide = 0;
 
@@ -244,13 +237,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
   setTimeout(() => {
     allSlides.forEach((slide) => {
-      if (slide.classList.contains('slide--hidden')) {
-        slide.classList.remove('slide--hidden');
+      if (slide.classList.contains("slide--hidden")) {
+        slide.classList.remove("slide--hidden");
       }
     });
   }, 5);
 
-  rightBtnSlide.addEventListener('click', function () {
+  rightBtnSlide.addEventListener("click", function () {
     if (currentSlide === allSlides.length - 1) {
       return;
     } else {
@@ -259,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function () {
     switchSlide(currentSlide);
   });
 
-  leftBtnSlide.addEventListener('click', function () {
+  leftBtnSlide.addEventListener("click", function () {
     if (currentSlide === 0) {
       return;
     } else {
@@ -270,57 +263,57 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // sign in
 
-  const loginForm = document.querySelector('.login--form');
-  const loginError = document.getElementById('loginError');
+  const loginForm = document.querySelector(".login--form");
+  const loginError = document.getElementById("loginError");
 
-  loginForm.addEventListener('submit', function (e) {
+  loginForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
     const formData = new FormData(loginForm);
 
-    fetch('http://127.0.0.1:5000/login', {
-      method: 'POST',
+    fetch("http://127.0.0.1:5000/login", {
+      method: "POST",
       body: formData,
     })
       .then((resp) => resp.json())
       .then((data) => {
         if (!data.success) {
           loginError.textContent = data.message;
-          loginError.style.display = 'block';
+          loginError.style.display = "block";
         } else {
-          window.location.href = '/app';
+          window.location.href = "/app";
         }
       })
-      .catch((error) => console.error('Error:', error));
+      .catch((error) => console.error("Error:", error));
   });
 
   // sign up
 
-  const signupForm = document.querySelector('.signup--form');
-  const signupError = document.getElementById('signupError');
-  signupForm.addEventListener('submit', function (e) {
+  const signupForm = document.querySelector(".signup--form");
+  const signupError = document.getElementById("signupError");
+  signupForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
     const formData = new FormData(signupForm);
 
-    fetch('http://127.0.0.1:5000/signup', {
-      method: 'POST',
+    fetch("http://127.0.0.1:5000/signup", {
+      method: "POST",
       body: formData,
     })
       .then((resp) => resp.json())
       .then((data) => {
         if (!data.success) {
           signupError.textContent = data.message;
-          signupError.style.display = 'block';
+          signupError.style.display = "block";
         } else {
           closeModal();
-          modal2.classList.remove('hidden');
-          overlay.classList.remove('hidden');
-          loginError.textContent = 'User registered successfully!';
-          loginError.style.display = 'block';
-          loginError.style.color = 'green';
+          modal2.classList.remove("hidden");
+          overlay.classList.remove("hidden");
+          loginError.textContent = "User registered successfully!";
+          loginError.style.display = "block";
+          loginError.style.color = "green";
         }
       })
-      .catch((error) => console.error('Error:', error));
+      .catch((error) => console.error("Error:", error));
   });
 });
