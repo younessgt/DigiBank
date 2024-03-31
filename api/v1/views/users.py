@@ -1,8 +1,42 @@
-from flask import jsonify, request
-from models import db
+from flask import jsonify, request, g
+from models import db, rd
 from flask_login import current_user
 from models.user import User
 from api.v1.views import app_views
+from functools import wraps
+
+
+def request_made(token):
+    ''' method that check for number of request'''
+    
+    limit_key = f'limit_{token}'
+    number_request = rd.get(limit_key)
+    if number_request and int(number_request) >= 10:
+        return False
+        
+    if not number_request and token is not None:
+        rd.set(limit_key, 1)
+    if number_request and token is not None:
+        rd.incr(limit_key)
+    return True
+                
+
+def token_or_login_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        token = request.headers.get('Authorization')
+        if not request_made(token):
+            print('yes')
+            return jsonify({"error": "Request limit reached"}), 429
+
+        key = f'auth_{token}'
+        user_token = rd.get(key)
+        if token == user_token:
+            user_id = rd.get(f"token_to_user_{token}")
+            g.user_id = user_id
+            return f(*args, **kwargs)
+        return jsonify({"error": "Unauthorized"}), 401
+    return wrapper
 
 
 @app_views.route('/some/infos', methods=['GET'], strict_slashes=False)
@@ -115,3 +149,52 @@ def delete():
 
 
     return jsonify(account_status), 200
+
+
+@app_views.route('/all/movements', methods=['GET'], strict_slashes=False)
+@token_or_login_required
+def all_movement():
+    ''' retreiving all user mouvements'''
+    
+    user_id = getattr(g, 'user_id', None)
+ 
+    
+    if user_id is None:
+        return jsonify({'error': "Unauthorized"}), 401
+        
+    user = User.objects(id=user_id).first()
+    movements = user.movements
+    username = user.username
+    id_usr = str(user.id)
+    
+    obj = {'username': username, 'id': id_usr, 'movements': movements}
+    
+    return jsonify(obj), 200
+
+
+@app_views.route('/infos', methods=['GET'], strict_slashes=False)
+@token_or_login_required
+def get_user_infos():
+    ''' retreving a user movements '''
+    
+    user_id = getattr(g, 'user_id', None)
+
+    
+    if user_id is None:
+        return jsonify({'error': "Unauthorized"}), 401
+
+    user_id = current_user.id
+    infos = db.get_info_account(user_id)
+
+    if infos is None:
+        return jsonify({'error': "Unauthorized"}), 401
+
+   
+    if len(infos.get('movements', [])) != 0:
+        formatted_movements = [
+            {**mov, 'date': mov['date'].isoformat() + 'Z'}
+            for mov in infos['movements']
+        ]
+
+        infos['movements'] = formatted_movements
+    return jsonify(infos)
