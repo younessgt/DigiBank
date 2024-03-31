@@ -26,7 +26,7 @@ def token_or_login_required(f):
     def wrapper(*args, **kwargs):
         token = request.headers.get('Authorization')
         if not request_made(token):
-            print('yes')
+
             return jsonify({"error": "Request limit reached"}), 429
 
         key = f'auth_{token}'
@@ -183,7 +183,6 @@ def get_user_infos():
     if user_id is None:
         return jsonify({'error': "Unauthorized"}), 401
 
-    user_id = current_user.id
     infos = db.get_info_account(user_id)
 
     if infos is None:
