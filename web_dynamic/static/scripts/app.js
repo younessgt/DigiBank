@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
     locale: "",
     status: "",
     currency: "",
+    profileImagePath: "",
   };
 
   // dop-down menu
@@ -153,6 +154,15 @@ document.addEventListener("DOMContentLoaded", function () {
     labelSumInterest.textContent = `${formattedMov3}`;
   };
 
+  const displayProfileImg = function (acc) {
+    const profileImg = document.querySelector(".profile img");
+    if (profileImg) {
+      profileImg.setAttribute("src", `${acc.profileImagePath}`);
+    }
+
+    console.log(profileImg);
+  };
+
   // display UI
   const updateUI = function (acc) {
     // Display movements
@@ -163,6 +173,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Display summary
     calcDisplaySummary(acc);
+
+    // Display Profile Image
+    displayProfileImg(acc);
   };
 
   // getting the user info to setup the movement part
@@ -190,6 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
           account.balance = data.account.balance;
           account.status = data.account.status;
           account.locale = account.currency === "USD" ? "en-US" : "fr-FR";
+          account.profileImagePath = data.profile_img_path;
 
           movements_array.forEach((movement) => {
             account.movements.push(movement.amount);
@@ -306,57 +320,57 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  let timer, displayTimerId;
-  // TimeLogout
-  const calcTimeLogout = function () {
-    let time = 20;
+  // let timer, displayTimerId;
+  // // TimeLogout
+  // const calcTimeLogout = function () {
+  //   let time = 20;
 
-    const tick = async function () {
-      const min = String(Math.trunc(time / 60)).padStart(2, 0);
-      const sec = String(time % 60).padStart(2, 0);
-      labelTimer.textContent = `${min}:${sec}`;
-      // console.log(20);
+  //   const tick = async function () {
+  //     const min = String(Math.trunc(time / 60)).padStart(2, 0);
+  //     const sec = String(time % 60).padStart(2, 0);
+  //     labelTimer.textContent = `${min}:${sec}`;
+  //     // console.log(20);
 
-      if (time === 0) {
-        // console.log(timer);
-        clearInterval(timer);
-        const resp = await fetch("http://127.0.0.1:5000/logout", {
-          method: "GET",
-          credentials: "include",
-        });
-        if (resp.redirected) {
-          window.location.href = resp.url;
-        }
-        return resp;
-      }
-      time--;
-    };
+  //     if (time === 0) {
+  //       // console.log(timer);
+  //       clearInterval(timer);
+  //       const resp = await fetch("http://127.0.0.1:5000/logout", {
+  //         method: "GET",
+  //         credentials: "include",
+  //       });
+  //       if (resp.redirected) {
+  //         window.location.href = resp.url;
+  //       }
+  //       return resp;
+  //     }
+  //     time--;
+  //   };
 
-    tick();
-    timer = setInterval(tick, 1000);
-    // return timer;
-  };
+  //   tick();
+  //   timer = setInterval(tick, 1000);
+  //   // return timer;
+  // };
 
-  // resetting the time once the user move the mouse or click on the body
-  const resetTimer = function () {
-    labelLogout.style.display = "none";
+  // // resetting the time once the user move the mouse or click on the body
+  // const resetTimer = function () {
+  //   labelLogout.style.display = "none";
 
-    clearTimeout(displayTimerId);
-    if (timer) clearInterval(timer);
-    displayTimerId = setTimeout(function () {
-      calcTimeLogout();
+  //   clearTimeout(displayTimerId);
+  //   if (timer) clearInterval(timer);
+  //   displayTimerId = setTimeout(function () {
+  //     calcTimeLogout();
 
-      labelLogout.style.display = "block";
-    }, 5000);
-  };
+  //     labelLogout.style.display = "block";
+  //   }, 5000);
+  // };
 
-  // when a user is login we attach an eventListner to the body after 1 second to controle the activity of the user
-  setTimeout(() => {
-    // console.log(10);
-    document.body.addEventListener("mousemove", resetTimer);
-    document.body.addEventListener("click", resetTimer);
-  }, 1000);
-  resetTimer();
+  // // when a user is login we attach an eventListner to the body after 1 second to controle the activity of the user
+  // setTimeout(() => {
+  //   // console.log(10);
+  //   document.body.addEventListener("mousemove", resetTimer);
+  //   document.body.addEventListener("click", resetTimer);
+  // }, 1000);
+  // resetTimer();
 
   // performing Token operation
   const inputToken = document.querySelector(".form__input--token-value");

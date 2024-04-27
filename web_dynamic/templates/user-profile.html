@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="test">
+    <div class="sidebar">
+      <div class="profile-image-container">
+        <img
+          src="../static/images/profile.png"
+          alt=""
+          class="profile-image"
+        />
+      </div>
+      <div class="navigation">
+          <ul>
+              <li>
+                  <a href="#" class="sidebar-button" id="btnAccount">
+                      <span class="icon">
+                          <ion-icon name="person-circle-outline"></ion-icon></span
+                        ><span class="title">Account</span>
+                  </a>
+              </li>
+              <li>
+                  <a href="#" class="sidebar-button" id="btnSettings">
+                      <span class="icon"><ion-icon name="settings-outline"></ion-icon></span
+                      ></span
+                      ><span class="title">Setting</span></a>
+              </li>
+             
+          </ul>
+      </div>
+ 
+    </div>
+
+    <div class="main-content">
+      <form id="accountForm" class="form2">
+        <h2>Account Information</h2>
+        <p id="textError" class="flash_text" style="display: none"></p>
+        <input class="inp" type="text" name="username" placeholder="Username" />
+        <input class="inp" type="email" name="email" placeholder="Email" />
+        <input class="inp" type="password" id="oldPassword" name="old_password" placeholder="Old password" />
+        <input class="inp" type="password" id="newPassword" name="new_password" placeholder="New password" />
+        <div class="file-upload-container">
+          <label for="profileImage" class="file-label">Upload Image</label>
+          <input class="inp" type="file" id="profileImage" name="profile_image" class="file-input" accept="image/*"/>
+        </div>
+        <div class="divto">
+          <button class="update-button">Update</button>
+          <button class="cancel-button">Cancel</button>
+        </div>
+      </form>
+
+      <div id="settingsForm" class="form2" style="display: none">
+        <h2>Settings</h2>
+        <!-- Add your settings fields here -->
+        <p>Settings content goes here.</p>
+      </div>
+    </div>
+  </div>
+  {% endblock %}
