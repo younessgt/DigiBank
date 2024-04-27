@@ -1,10 +1,11 @@
+import os
 from flask import jsonify, request, g
 from models import db, rd
-from flask_login import current_user
+from flask_login import current_user, login_required
 from models.user import User
 from api.v1.views import app_views
 from functools import wraps
-
+from pathlib import Path
 
 def request_made(token):
     ''' method that check for number of request'''
@@ -177,3 +178,58 @@ def get_user_infos():
 
         infos['movements'] = formatted_movements
     return jsonify(infos)
+
+
+@app_views.route('/update-profile', methods=['POST'], strict_slashes=False)
+# @login_required
+def update_profile():
+    ''' updating user infos '''
+    
+    username = request.form.get('username')
+    new_email = request.form.get('email')
+    old_password = request.form.get('old_password')
+    new_password = request.form.get('new_password')
+    file = request.files.get('profile_image')
+    
+    email = current_user.email
+    if username:
+        user = db.update_username(email, username)
+        if not user:
+            return jsonify({'success': False}), 400
+
+    if new_email:
+        user = db.update_username(email, new_email)
+        if not user:
+            return jsonify({'success': False}), 400
+        
+    if old_password and new_password:
+        user = db.update_password(email, old_password, new_password)
+        if not user:
+            return jsonify({'success': False}), 400
+    
+    if file:
+        try:
+            filename = f'img-{current_user.id}'
+            current_dir = Path(__file__).resolve().parent
+            base_dir = current_dir.parents[2]
+            # print('base_dir: ', base_dir)
+            path = os.path.join(base_dir, 'profiles', str(current_user.id))
+            file_path = os.path.join(path, filename)
+            
+        
+            
+    
+            os.makedirs(path, exist_ok=True)
+            file.save(file_path)
+        except PermissionError as e:
+            print(f"Permission error: {e}")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            
+        profile_img_path_db = f'/profiles/{current_user.id}/{filename}'
+        
+        user = db.update_profile_img(email, profile_img_path_db)
+        if not user:
+            return jsonify({'success': False}), 400
+
+    return jsonify({'success': True}), 200

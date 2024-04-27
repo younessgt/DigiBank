@@ -157,6 +157,7 @@ nav {
   border-radius: 1rem;
   padding: 3rem 4rem;
   color: #333;
+  margin-bottom: 11px;
 }
 
 .operation--transfer {
@@ -204,7 +205,7 @@ h2 {
   font-size: 1.5rem;
   text-align: center;
   color: #333;
-  padding: 0.3rem 1rem;
+  padding: 0.5rem 1rem;
   border-radius: 0.7rem;
   transition: all 0.3s;
 }

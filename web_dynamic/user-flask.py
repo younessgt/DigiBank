@@ -8,7 +8,8 @@ from flask import (
     request, redirect,
     url_for,
     jsonify,
-    session
+    session,
+    send_from_directory
 )
 from models import db, rd
 from flask_login import (
@@ -25,6 +26,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 app = Flask(__name__)
+
 
 app.secret_key = os.environ.get('FLASK_SECRET_KEY')
 csrf = CSRFProtect(app)
@@ -191,8 +193,17 @@ def get_google_oauth_token():
     the current user for Google OAuth provider from
     flask session.
     """
+    
     return session.get('google_token')
 
+@app.route('/user')
+def user_profile():
+    return render_template('user-profile.html')
+
+
+@app.route('/profiles/<path:filename>')
+def custom_static(filename):
+    return send_from_directory('../profiles', filename)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

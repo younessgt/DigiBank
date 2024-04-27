@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Profile Update</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav>
+      <img src="../static/images/logo.png" alt="Logo" class="logo" />
+
+      <div class="action">
+        <div class="profile">
+          <img src="../static/images/profile.png" alt="" />
+        </div>
+        <div class="menu">
+          <h3 class="user__name"></h3>
+          <ul>
+            <li>
+              <img src="../static/images/user.png" /><a href="#">My Account</a>
+            </li>
+            <li>
+              <img src="../static/images/question.png" /><a href="#">Help</a>
+            </li>
+            <li>
+              <img src="../static/images/settings.png" /><a href="#"
+                >Settings</a
+              >
+            </li>
+            <li>
+              <img src="../static/images/log-out.png" /><a href="/logout"
+                >Logout</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="test">
+      <div class="sidebar">
+        <div class="profile-image-container">
+          <img
+            src="path-to-your-profile-image.jpg"
+            alt=""
+            class="profile-image"
+          />
+        </div>
+        <div class="navigation">
+            <ul>
+                <li>
+                    <a href="#" class="sidebar-button" id="btnAccount">
+                        <span class="icon">
+                            <ion-icon name="person-circle-outline"></ion-icon></span
+                          ><span class="title">Account</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="sidebar-button" id="btnSettings">
+                        <span class="icon"><ion-icon name="settings-outline"></ion-icon></span
+                        ></span
+                        ><span class="title">Setting</span></a>
+                </li>
+               
+            </ul>
+        </div>
+   
+      </div>
+
+      <div class="main-content">
+        <form id="accountForm" class="form">
+          <h2>Account Information</h2>
+
+          <input type="text" id="username" placeholder="Username" />
+          <input type="email" id="email" placeholder="Email" />
+          <input type="password" id="oldPassword" placeholder="Old password" />
+          <input type="password" id="newPassword" placeholder="New password" />
+          <div class="file-upload-container">
+            <label for="profileImage" class="file-label">Upload Image</label>
+            <input type="file" id="profileImage" class="file-input" />
+          </div>
+          <div class="divto">
+            <button class="update-button">Update</button>
+            <button class="cancel-button">Cancel</button>
+          </div>
+        </form>
+
+        <div id="settingsForm" class="form" style="display: none">
+          <h2>Settings</h2>
+          <!-- Add your settings fields here -->
+          <p>Settings content goes here.</p>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+  </body>
+</html>

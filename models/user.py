@@ -22,6 +22,7 @@ class User(UserMixin, Document):
     movements = ListField(DictField())
     account = DictField()
     created_at = DateTimeField(default=datetime.now)
+    profile_image_path = StringField()
 
     meta = {'collection': 'users'}
 

@@ -44,7 +44,7 @@ class Mongodb():
         hashed_password = bcrypt.hashpw(passwrd_bytes, salt)
 
         info = {
-            'email': email,
+            'email': email.lower(),
             'hashed_password': hashed_password,
             'username': username,
             'currency': currency
@@ -53,6 +53,8 @@ class Mongodb():
         user = User(info)
         user.account['balance'] = 1000
         user.account['status'] = 'active'
+        path_image = '/profiles/default/img-default.png'
+        user.profile_image_path = path_image
 
         try:
 
@@ -187,6 +189,7 @@ class Mongodb():
         user_v1 = User.objects(id=user_id).only('username').first()
         user_v2 = User.objects(id=user_id).only('account').first()
         user_v3 = User.objects(id=user_id).only('currency').first()
+        user_v4 = User.objects(id=user_id).only('profile_image_path').first()
 
         if not user_v1 or not user_v2 or not user_v3:
             return None
@@ -197,7 +200,8 @@ class Mongodb():
             'username': user_v1.username,
             'currency': user_v3.currency,
             'account': user_v2.account,
-            'movements': first_10_mov
+            'movements': first_10_mov,
+            'profile_img_path': user_v4.profile_image_path
         }
 
     def check_user(self, email, password):
@@ -217,3 +221,62 @@ class Mongodb():
             return user
         else:
             return None
+
+    def update_email(self, email, new_email):
+        ''' Updating user email'''
+        
+        user = User.objects(email=email).first()
+        
+        if not user:
+            return None
+        
+        user.email = new_email.lower()
+        user.save()
+        return user
+    
+    def update_username(self, email, new_username):
+        ''' Updating user username'''
+        
+        user = User.objects(email=email).first()
+        
+        if not user:
+            return None
+        
+        user.username = new_username
+        user.save()
+        return user
+    
+    def update_password(self, email, old_password, new_password):
+        ''' Updating user password'''
+        
+        user = self.check_user(email, old_password)
+        print(user)
+        
+        if not user:
+            return None
+        
+        password_bytes = new_password.encode('utf-8')
+        salt = bcrypt.gensalt()
+        updated_hashed_password = bcrypt.hashpw(password_bytes, salt)
+        user.hashed_password = updated_hashed_password.decode('utf-8')
+        
+        # print(old_password)
+        # print(new_password)
+        # print(password_bytes)
+        # print(updated_hashed_password)
+        # print(updated_hashed_password.decode('utf-8'))
+        user.save()
+        return user
+    
+    
+    def update_profile_img(self, email, profile_img_path_db):
+        '''updating user profile image'''
+        
+        user = User.objects(email=email).first()
+        
+        if not user:
+            return None
+        
+        user.profile_image_path = profile_img_path_db
+        user.save()
+        return user
