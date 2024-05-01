@@ -1,1 +1,3 @@
 .env
+/profiles
+**/__pycache__/

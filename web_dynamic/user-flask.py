@@ -9,7 +9,8 @@ from flask import (
     url_for,
     jsonify,
     session,
-    send_from_directory
+    send_from_directory,
+    g
 )
 from models import db, rd
 from flask_login import (
@@ -23,16 +24,27 @@ from models.user import User
 from flask_wtf.csrf import CSRFProtect
 from flask_oauthlib.client import OAuth
 from dotenv import load_dotenv
+from flask_mail import Mail, Message
+# from flask_cors import CORS
 
 load_dotenv()
 app = Flask(__name__)
 
 
 app.secret_key = os.environ.get('FLASK_SECRET_KEY')
+app.config['MAIL_SERVER'] = "smtp.gmail.com"
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = "noreplayapp8@gmail.com"
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+
+mail = Mail(app)
 csrf = CSRFProtect(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+# CORS(app)
 
 # OAuth Configuration
 oauth = OAuth(app)
@@ -116,12 +128,15 @@ def signup():
     password = request.form.get('password')
     re_password = request.form.get('re-password')
     currency = request.form.get('currency')
+    
+    
 
     if password != re_password:
         return jsonify({'success': False,
                         'message': 'Passwords do not match!'})
 
-    msg = db.create_user(email, password, username, currency)
+    # msg = db.create_user(email, password, username, currency)
+    msg = db.user_exist(email, username)
 
     if msg == 'email_exist':
         return jsonify({'success': False, 'message': 'Email already exists'})
@@ -129,7 +144,89 @@ def signup():
         return jsonify({'success': False,
                         'message': 'Username already exists'})
 
+
+    # generating verification code
+    key = f'email_verification_{email}'
+    email_verification_code = rd.get(key)
+    
+    if email_verification_code:
+        rd.del_key(key)
+        
+    email_verification_code = "".join(random.choice('0123456789') for _ in range(4))
+    rd.set(key, email_verification_code, 300)
+    
+    # storing user info in flask session to use it on multiple requests
+    # "use case in /verification route"
+    session['user_info'] = {
+        'email': email,
+        'username': username,
+        'password': password,
+        'currency': currency
+    }
+    
+    print("email_verification_code: ", email_verification_code )
+    # sending email Part
+    email_msg_title = "Email Verification"
+    sender = "noreplay@digibank.com"
+    email_msg = Message(email_msg_title, sender=sender, recipients=[email])
+    email_msg.body = ""
+    data = {
+        'username': username,
+        'verification_code': int(email_verification_code)
+    }
+    email_msg.html = render_template('verification-email.html', data=data)
+    
+    try:
+        mail.send(email_msg)
+        # print('Email send Successfully')
+    except Exception as e:
+        print(e)
     return jsonify({'success': True})
+
+
+@app.route('/verification', methods=['POST'], strict_slashes=False)
+def verification_code_signup():
+    ''' verify the sign up verification code'''
+    user_info = session['user_info']
+    email = user_info.get('email')
+    username = user_info.get('username')
+    password = user_info.get('password')
+    currency = user_info.get('currency')
+    
+    try:
+        data = request.get_json()
+        # print(data)
+        if data is None:
+            return jsonify({'error': 'No data provided'}), 400
+        verification_code = data.get('code')
+        if not verification_code:
+            return jsonify({'error': 'Verification code is required'}), 400
+
+        # print("Received verification code:", verification_code)
+        
+        key = f'email_verification_{email}'
+        email_verification_code = rd.get(key)
+        
+        
+        if email_verification_code is None:
+
+            return jsonify({"success": False, 'status': "expired"})
+
+        if email_verification_code != verification_code:
+
+            return jsonify({"success": False, 'status': "not match"})
+        
+        if email_verification_code == verification_code:
+
+            try:
+
+                db.create_user(email, password, username, currency)
+                return jsonify({'success': True}), 200
+            except Exception as e:
+                return jsonify({'error': str(e)}), 500
+ 
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/token', methods=['GET'], strict_slashes=False)

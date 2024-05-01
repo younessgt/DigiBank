@@ -20,10 +20,11 @@ class Mongodb():
         except ConnectionFailure as e:
             print(f'Failed to connect: {e}')
             raise ConnectionFailure('Could Not Connect') from e
-
-    def create_user(self, email, password, username, currency):
-        ''' adding user in db '''
-
+        
+        
+    def user_exist(self, email, username):
+        """ checking if the email or username already exist """
+        
         user_exist_by_email = User.objects(email=email).first()
 
         user_exist_by_username = User.objects(username=username).first()
@@ -35,6 +36,22 @@ class Mongodb():
         if user_exist_by_username:
             print('username exist')
             return 'username_exist'
+        return None
+
+    def create_user(self, email, password, username, currency):
+        ''' adding user in db '''
+
+        # user_exist_by_email = User.objects(email=email).first()
+
+        # user_exist_by_username = User.objects(username=username).first()
+
+        # if user_exist_by_email:
+        #     print('email exist')
+        #     return 'email_exist'
+
+        # if user_exist_by_username:
+        #     print('username exist')
+        #     return 'username_exist'
 
         # encrypting password
 
@@ -61,6 +78,8 @@ class Mongodb():
             user.save()
         except Exception as e:
             print(f"Error saving user: {e}")
+        
+        return user
 
     def delete_user(self, email, password):
         ''' deleting user from db and changing status account to inactive '''

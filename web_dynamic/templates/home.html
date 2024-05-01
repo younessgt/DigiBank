@@ -14,6 +14,10 @@
       href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600&display=swap"
       rel="stylesheet"
     />
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="../static/styles/home.css" />
     <title>DigiBank</title>
   </head>
@@ -396,6 +400,7 @@
       </form>
     </div>
 
+
     <div class="modal2 hidden">
       <button class="btn--close-modal2">&times;</button>
       <h2 class="modal__header">
@@ -421,6 +426,48 @@
         <button class="sgibtn">Sign in &rarr;</button>
       </form>
     </div>
+
+    <!-- <div class="container modal3 hidden">
+      <button class="btn--close-modal3">&times;</button>
+      <header class="code__header">
+        <i class="bx bxs-check-shield"></i>
+      </header>
+      <h4>Enter Your Verification Code</h4>
+      <p>Please enter the 4-digit code you received in your email.</p>
+      <h6>Code Valid For 2 Minutes</h6>
+      <form action="/verification" method="post" class="code__form">
+        <input class="token_csrf" type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <div class="input-field">
+          <input class="code" type="number" />
+          <input class="code" type="number" disabled />
+          <input class="code" type="number" disabled />
+          <input class="code" type="number" disabled />
+        </div>
+        <button class="verify_code">Verify</button>
+      </form>
+    </div> -->
+
+    <div class="container modal3 hidden">
+      <button class="btn--close-modal3">&times;</button>
+      <header class="code__header">
+        <i class="bx bxs-check-shield"></i>
+      </header>
+      <h4>Enter Your Verification Code</h4>
+      <div id="verification-msg" class="flash__email" style="display: none"></div>
+      <p>Please enter the 4-digit code you received in your email.</p>
+      <h6>Code Valid For 2 Minutes</h6>
+      <form action="#" class="code__form">
+        <input class="token_csrf" type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <div class="input-field">
+          <input class="code" type="number" />
+          <input class="code" type="number" disabled />
+          <input class="code" type="number" disabled />
+          <input class="code" type="number" disabled />
+        </div>
+        <button class="verify_code">Verify</button>
+      </form>
+    </div>
+
 
     <div class="overlay hidden"></div>
     <script src="https://unpkg.com/scrollreveal"></script>
