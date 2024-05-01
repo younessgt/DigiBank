@@ -3,10 +3,12 @@
 document.addEventListener("DOMContentLoaded", function () {
   const modal = document.querySelector(".modal");
   const modal2 = document.querySelector(".modal2");
+  const modal3 = document.querySelector(".modal3");
 
   const overlay = document.querySelector(".overlay");
   const btnCloseModal = document.querySelector(".btn--close-modal");
   const btnCloseModal2 = document.querySelector(".btn--close-modal2");
+  const btnCloseModal3 = document.querySelector(".btn--close-modal3");
 
   const btnsOpenModal = document.querySelectorAll(".btn--show-modal");
   const btnsOpenModal2 = document.querySelectorAll(".btn--show-modal2");
@@ -25,6 +27,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const rightBtnSlide = document.querySelector(".slider__btn--right");
 
   const leftBtnSlide = document.querySelector(".slider__btn--left");
+
+  const inputs = document.querySelectorAll(".code"),
+    verifyCodeButton = document.querySelector(".verify_code");
+
+  let combinedNumber = "";
+
+  const verificationMsg = document.getElementById("verification-msg");
 
   // open modal function
   const openModal = function (e) {
@@ -51,12 +60,18 @@ document.addEventListener("DOMContentLoaded", function () {
     overlay.classList.add("hidden");
   };
 
+  const closeModal3 = function () {
+    modal3.classList.add("hidden");
+    overlay.classList.add("hidden");
+  };
+
   btnsOpenModal.forEach((btn) => btn.addEventListener("click", openModal));
   btnsOpenModal2.forEach((btn) => btn.addEventListener("click", openModal2));
 
   // handling close modal
   btnCloseModal.addEventListener("click", closeModal);
   btnCloseModal2.addEventListener("click", closeModal2);
+  btnCloseModal3.addEventListener("click", closeModal3);
 
   overlay.addEventListener("click", closeModal);
   overlay.addEventListener("click", closeModal2);
@@ -307,13 +322,149 @@ document.addEventListener("DOMContentLoaded", function () {
           signupError.style.display = "block";
         } else {
           closeModal();
+          modal3.classList.remove("hidden");
+          overlay.classList.remove("hidden");
+          //focus the first input which index is 0 on window load
+          window.addEventListener("load", () => inputs[0].focus());
+        }
+      })
+      .catch((error) => console.error("Error:", error));
+  });
+
+  // verfication code form
+
+  // iterate over all inputs
+  inputs.forEach((input, index1) => {
+    input.addEventListener("keyup", (e) => {
+      const currentInput = input,
+        nextInput = input.nextElementSibling,
+        prevInput = input.previousElementSibling;
+
+      // if the value has more than one character then clear it
+      if (currentInput.value.length > 1) {
+        currentInput.value = currentInput.value.charAt(0);
+        //   return;
+      }
+
+      // updateCombinedNumber();
+
+      // if the next input is disabled and the current value is not empty
+      //  enable the next input and focus on it
+      if (
+        nextInput &&
+        nextInput.hasAttribute("disabled") &&
+        currentInput.value !== ""
+      ) {
+        nextInput.removeAttribute("disabled");
+        nextInput.focus();
+      }
+      // console.log("index1", index1);
+      console.log(currentInput.value);
+      // if the backspace key is pressed
+      if (e.key === "Backspace") {
+        if (prevInput) {
+          currentInput.setAttribute("disabled", true);
+          currentInput.value = "";
+          prevInput.focus();
+        }
+      }
+
+      checkAllFilled();
+    });
+  });
+
+  // Updating the combinedNumber variable based on input values
+  // function updateCombinedNumber() {
+  //   combinedNumber = Array.from(inputs)
+  //     .map((input) => input.value)
+  //     .join("");
+  //   console.log("Combined Number:", combinedNumber);
+  // }
+
+  // Checking if all inputs are filled and then update the verifyCodeButton class
+  function checkAllFilled() {
+    const allFilled = Array.from(inputs).every((input) => input.value !== "");
+    verifyCodeButton.classList.toggle("active", allFilled);
+  }
+
+  // send verification code
+
+  verifyCodeButton.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const csrfToken = document.querySelector(".token_csrf").value;
+    const combinedNumber1 = Array.from(document.querySelectorAll(".code"))
+      .map((input) => input.value)
+      .join("");
+
+    fetch("http://127.0.0.1:5000/verification", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": csrfToken,
+      },
+      body: JSON.stringify({ code: combinedNumber1 }),
+    })
+      .then((resp) => {
+        if (!resp.ok) {
+          throw new Error("Network response problem" + resp.statusText);
+        }
+        return resp.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          closeModal3();
           modal2.classList.remove("hidden");
           overlay.classList.remove("hidden");
           loginError.textContent = "User registered successfully!";
           loginError.style.display = "block";
           loginError.style.color = "green";
+        } else {
+          if (data.status === "expired") {
+            verificationMsg.textContent = "Verification Code is Expired";
+          } else {
+            verificationMsg.textContent = "Wrong verification Code";
+          }
+          verificationMsg.style.display = "block";
         }
+        console.log("Success:", data);
       })
-      .catch((error) => console.error("Error:", error));
+      .catch((err) => {
+        console.error("Error", err);
+      });
   });
+  // const verifyCodeForm = document.querySelector(".code__form");
+  // verifyCodeForm.addEventListener("submit", (e) => {
+  //   e.preventDefault();
+  //   // const formData = new FormData(verifyCodeForm);
+  //   const csrfToken = document.querySelector(".token_csrf").value;
+  //   const combinedNumber1 = Array.from(document.querySelectorAll(".code"))
+  //     .map((input) => input.value)
+  //     .join("");
+  //   console.log("Sending Code:", combinedNumber1); // Check what you send
+
+  //   // const payload = JSON.stringify({ code: combinedNumber1 });
+  //   // console.log(payload);
+  //   fetch("/verification", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       "X-CSRF-Token": csrfToken,
+  //     },
+  //     body: JSON.stringify({ code: combinedNumber1 }),
+  //     // body: formData,
+  //   })
+  //     .then((resp) => {
+  //       if (!resp.ok) {
+  //         throw new Error("Network response was not ok " + resp.statusText);
+  //       }
+  //       return resp.json();
+  //     })
+  //     .then((data) => {
+  //       console.log("Success:", data);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Error", err);
+  //     });
+  // });
 });
