@@ -15,10 +15,11 @@ document.addEventListener("DOMContentLoaded", function () {
     profileImagePath: "",
   };
 
+  let file;
   // changing photo
   document.getElementById("profileImage").onchange = function (event) {
     textError.style.display = "none";
-    const file = event.target.files[0];
+    file = event.target.files[0];
     // console.log(file);
 
     if (event.target.files && file) {
@@ -33,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (file.size > 2097152) {
         textError.textContent = "File size exceeds 2MB";
         textError.style.display = "block";
+        textError.style.color = "red";
         return;
       }
       let reader = new FileReader();
@@ -50,6 +52,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
   accountForm.addEventListener("submit", async function (e) {
     e.preventDefault();
+
+    if (file) {
+      if (file.size > 2097152) {
+        textError.textContent = "File size exceeds 2MB";
+        textError.style.display = "block";
+        textError.style.color = "red";
+        return;
+      }
+    }
 
     const oldPassword = document.getElementById("oldPassword").value;
     const newPassword = document.getElementById("newPassword").value;
@@ -74,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function () {
         textError.style.display = "block";
       } else {
         textError.style.color = "red";
-        textError.textContent = "Uups Something Wrong";
+        textError.textContent = "Uups Something goes Wrong";
         textError.style.display = "block";
       }
     } catch (error) {
@@ -129,4 +140,160 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   fetchProfileImage();
+
+  /* bank statement part */
+
+  const notifications = document.querySelector(".notifications");
+  const checkButton = document.getElementById("checkButton");
+
+  const toastDetails = {
+    timer: 3000,
+    success: {
+      icon: "fa-circle-check",
+      // text: "Success: This is a success toast.",
+    },
+    error: {
+      icon: "fa-circle-xmark",
+      // text: "Error: Please select an end date.",
+    },
+    warning: {
+      icon: "fa-triangle-exclamation",
+      // text: "Warning: This is a warning toast.",
+    },
+    info: {
+      icon: "fa-circle-info",
+      // text: "Info: This is an information toast.",
+    },
+  };
+
+  const removeToast = (toast) => {
+    toast.classList.add("hide");
+    if (toast.timeoutId) clearTimeout(toast.timeoutId);
+    setTimeout(() => toast.remove(), 500);
+  };
+  let closeNotification;
+  const createToast = (type, msg) => {
+    const { icon, text } = toastDetails[type];
+    const toast = document.createElement("li");
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<div class="column">
+                         <i class="fa-solid ${icon}"></i>
+                         <span>${msg}</span>
+                      </div>
+                      <i class="fa-solid fa-xmark" id="close-notification"></i>`;
+    notifications.appendChild(toast);
+    closeNotification = document.getElementById("close-notification");
+    closeNotification.addEventListener("click", (e) => {
+      removeToast(e.target.parentElement);
+    });
+    // console.log(closeNotification);
+    toast.timeoutId = setTimeout(() => removeToast(toast), toastDetails.timer);
+    console.log(toast);
+  };
+  document.getElementById("startDate").addEventListener("change", function () {
+    const startDate = document.getElementById("startDate").value;
+    const endDateInput = document.getElementById("endDate");
+
+    if (startDate) {
+      endDateInput.min = startDate;
+    }
+  });
+
+  document.getElementById("endDate").addEventListener("change", function () {
+    const startDateInput = document.getElementById("startDate");
+    const endDate = document.getElementById("endDate").value;
+
+    if (endDate) {
+      startDateInput.max = endDate;
+    }
+  });
+
+  // check button
+  checkButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    const startDate = document.getElementById("startDate").value;
+    const endDate = document.getElementById("endDate").value;
+
+    if (!startDate) {
+      createToast("warning", "Warning: Please select a start date.");
+
+      return;
+    }
+    if (!endDate) {
+      createToast("warning", "Warning: Please select an end date.");
+
+      return;
+    }
+
+    fetch("http://127.0.0.1:5001/api/v1/check-movements-date", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ start_date: startDate, end_date: endDate }),
+    })
+      .then((resp) => {
+        if (!resp.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return resp.json();
+      })
+      .then((data) => {
+        if (data.success && data.movements) {
+          document.getElementById("downloadButton").style.display = "block";
+          createToast("success", "Success: Bank statement PDF available.");
+          console.log(data);
+        }
+        if (data.success && !data.movements) {
+          document.getElementById("downloadButton").style.display = "none";
+          createToast("info", "Info: No movements found in this date range");
+        }
+      })
+      .catch((error) => console.error("problem with fetch operation:", error));
+  });
+
+  // download pdf button
+  document
+    .getElementById("downloadButton")
+    .addEventListener("click", function () {
+      const startDate = document.getElementById("startDate").value;
+      const endDate = document.getElementById("endDate").value;
+
+      // alert(`Downloading bank statement from ${startDate} to ${endDate}`);
+      // // Simulate download (This should be replaced with actual file download logic)
+      // window.open("path/to/download/statement.pdf"); // Link to the generated PDF file
+
+      fetch("http://127.0.0.1:5001/api/v1/download-statement-pdf", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ start_date: startDate, end_date: endDate }),
+      })
+        .then((resp) => {
+          if (!resp.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return resp.blob();
+        })
+        .then((blob) => {
+          // Create a URL for the blob object
+          const url = window.URL.createObjectURL(blob);
+          // Create a new anchor element
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "bank_statement.pdf"; // Specify the file name for download
+          document.body.appendChild(a);
+          a.click(); // Start the download
+
+          // Cleanup: remove the anchor element and revoke the URL
+          a.remove();
+          window.URL.revokeObjectURL(url);
+        })
+        .catch((error) =>
+          console.error("problem with fetch operation:", error)
+        );
+    });
 });
