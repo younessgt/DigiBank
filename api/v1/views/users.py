@@ -1,11 +1,14 @@
 import os
-from flask import jsonify, request, g
+from flask import jsonify, request, g, session, render_template, make_response
 from models import db, rd
 from flask_login import current_user, login_required
 from models.user import User
 from api.v1.views import app_views
 from functools import wraps
 from pathlib import Path
+from datetime import datetime, timedelta
+from weasyprint import HTML
+
 
 def request_made(token):
     ''' method that check for number of request'''
@@ -233,3 +236,89 @@ def update_profile():
             return jsonify({'success': False}), 400
 
     return jsonify({'success': True}), 200
+
+
+@app_views.route('/check-movements-date', methods=['POST'], strict_slashes=False)
+@login_required
+def check_movements_date():
+    ''' checking if the dates exists in the db '''
+    try:
+        data = request.get_json()
+        
+        if data is None:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        # print(type(data.get('start_date')))
+        # print(type(data.get('end_date')))
+        
+        start_date = datetime.strptime(data.get('start_date'), '%Y-%m-%d')
+        end_date = datetime.strptime(data.get('end_date'), '%Y-%m-%d')+ timedelta(days=1)
+        
+        print(start_date)
+        print(type(start_date))
+        
+        user = User.objects(id=current_user.id).first()
+        # user = User.objects(email='test1@gmail.com').first()
+        if user is None:
+            return jsonify({'success': False}), 400
+        
+        filtered_movements = [
+            movement for movement in user.movements 
+            if 'date' in movement and start_date <= movement['date'].replace(tzinfo=None) <= end_date
+        ]
+        
+        if len(filtered_movements) == 0:
+            return jsonify({'success': True, 'movements': False})
+        
+        print(len(filtered_movements))
+        
+        for movement in filtered_movements:
+            movement['date'] = movement['date'].strftime('%Y-%m-%d')
+            
+            if movement['type'] == 'deposit':
+                movement['receiver'] = current_user.username
+            elif movement['type'] == 'withdrawal':
+                movement['sender'] = current_user.username
+        
+        print(filtered_movements)
+        session['filtered_movements'] = filtered_movements
+        return jsonify({'success': True, 'movements': True}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+    
+@app_views.route('/download-statement-pdf', methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def download_bank_statement():
+    ''' generation a bank statement pdf for user request'''
+    
+    filtered_movements = session['filtered_movements']
+    data = request.get_json()
+    if data is None:
+            return jsonify({'error': 'No data provided'}), 400
+        
+    start_date = data.get('start_date')
+    end_date = data.get('end_date')
+    
+    info = {
+        'start_date': start_date,
+        'end_date': end_date,
+        'username': current_user.username,
+        'id': current_user.id,
+        'currency': current_user.currency
+    }
+    
+    print(filtered_movements)
+    
+    if len(filtered_movements) > 0:
+        rendered_html = render_template('bank-statement.html', info=info, filtered_movements=filtered_movements)
+        # Generate PDF from HTML
+        pdf = HTML(string=rendered_html).write_pdf()
+
+        response = make_response(pdf)
+        response.headers['Content-Disposition'] = 'attachment; filename=bank_statement.pdf'
+        response.headers['Content-Type'] = 'application/pdf'
+
+        return response
+        
+    return jsonify({'success': True})
