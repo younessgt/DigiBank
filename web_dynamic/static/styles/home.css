@@ -573,7 +573,8 @@ h4 {
 
 .modal,
 .modal2,
-.modal3 {
+.modal3,
+.modal4 {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -614,6 +615,19 @@ h4 {
   gap: 2.5rem;
 }
 
+.login__forgot {
+  grid-column: 1 / -1; /* This makes the link span all columns in the grid */
+  text-align: right; /* This centers the text within the link */
+  display: block;
+
+  color: var(--main-color);
+  font-size: 12px;
+  font-weight: 400;
+}
+.login__forgot:hover {
+  color: black;
+}
+
 .modal__form label {
   font-size: 1.7rem;
   font-weight: 500;
@@ -634,7 +648,8 @@ h4 {
 
 .btn--close-modal,
 .btn--close-modal2,
-.btn--close-modal3 {
+.btn--close-modal3,
+.btn--close-modal4 {
   font-family: inherit;
   color: inherit;
   position: absolute;
@@ -785,4 +800,13 @@ h4 {
 }
 .code__form button:hover {
   background: #65858d;
+}
+
+/* forgot-password part*/
+
+.modal__header__forgot {
+  font-size: 3.25rem;
+  margin-bottom: 2.5rem;
+  line-height: 1.5;
+  text-align: center;
 }

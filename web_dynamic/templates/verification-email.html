@@ -26,10 +26,21 @@
         font-size: 24px;
         margin-bottom: 20px;
         color: #333;
+        text-align: center;
       }
       p {
         margin-bottom: 20px;
         color: #555;
+      }
+
+      .header {
+        background-color: #f9f9f9;
+        padding: 10px 20px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+      }
+      .header img {
+        max-width: 100px;
       }
       .verification-code {
         background-color: #617c83;
@@ -48,6 +59,12 @@
   </head>
   <body>
     <div class="container">
+      <div class="header">
+        <img
+          src="https://logo8bucket.s3.amazonaws.com/logo.png"
+          alt="DigiBank Logo"
+        />
+      </div>
       <h1>Email Verification</h1>
       <p>Dear {{data.username}},</p>
       <p>

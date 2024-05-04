@@ -4,11 +4,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const modal = document.querySelector(".modal");
   const modal2 = document.querySelector(".modal2");
   const modal3 = document.querySelector(".modal3");
+  const modal4 = document.querySelector(".modal4");
 
   const overlay = document.querySelector(".overlay");
   const btnCloseModal = document.querySelector(".btn--close-modal");
   const btnCloseModal2 = document.querySelector(".btn--close-modal2");
   const btnCloseModal3 = document.querySelector(".btn--close-modal3");
+  const btnCloseModal4 = document.querySelector(".btn--close-modal4");
 
   const btnsOpenModal = document.querySelectorAll(".btn--show-modal");
   const btnsOpenModal2 = document.querySelectorAll(".btn--show-modal2");
@@ -54,6 +56,11 @@ document.addEventListener("DOMContentLoaded", function () {
     overlay.classList.remove("hidden");
   };
 
+  const openModal4 = function () {
+    modal4.classList.remove("hidden");
+    overlay.classList.remove("hidden");
+  };
+
   // close modal function (login)
   const closeModal2 = function () {
     modal2.classList.add("hidden");
@@ -65,6 +72,11 @@ document.addEventListener("DOMContentLoaded", function () {
     overlay.classList.add("hidden");
   };
 
+  const closeModal4 = function () {
+    modal4.classList.add("hidden");
+    overlay.classList.add("hidden");
+  };
+
   btnsOpenModal.forEach((btn) => btn.addEventListener("click", openModal));
   btnsOpenModal2.forEach((btn) => btn.addEventListener("click", openModal2));
 
@@ -72,9 +84,11 @@ document.addEventListener("DOMContentLoaded", function () {
   btnCloseModal.addEventListener("click", closeModal);
   btnCloseModal2.addEventListener("click", closeModal2);
   btnCloseModal3.addEventListener("click", closeModal3);
+  btnCloseModal4.addEventListener("click", closeModal4);
 
   overlay.addEventListener("click", closeModal);
   overlay.addEventListener("click", closeModal2);
+  overlay.addEventListener("click", closeModal4);
 
   // handle escape btn to close the model
   document.addEventListener("keydown", function (e) {
@@ -302,6 +316,16 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch((error) => console.error("Error:", error));
   });
 
+  const forgotPassBtn = document.querySelector(".login__forgot");
+
+  forgotPassBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+    console.log("hi");
+
+    closeModal2();
+    openModal4();
+  });
+
   // sign up
 
   const signupForm = document.querySelector(".signup--form");
@@ -432,6 +456,36 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch((err) => {
         console.error("Error", err);
       });
+  });
+
+  // forgot password part
+
+  const forgotPassForm = document.querySelector(".forgot--pass--form");
+  const forgotPassErr = document.getElementById("forgot-pass-err");
+  const forgotEmail = document.getElementById("forgot-email");
+  forgotPassForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(forgotPassForm);
+
+    fetch("http://127.0.0.1:5000/forgot-password", {
+      method: "POST",
+      body: formData,
+    })
+      .then((resp) => resp.json())
+      .then((data) => {
+        if (!data.success) {
+          forgotPassErr.textContent = "Email doesn't exist";
+          forgotPassErr.style.display = "block";
+          forgotPassErr.style.color = "red";
+        } else {
+          forgotPassErr.textContent =
+            "Email was sent to you please check your inbox";
+          forgotPassErr.style.display = "block";
+          forgotPassErr.style.color = "green";
+        }
+      })
+      .catch((error) => console.error("Error:", error));
   });
   // const verifyCodeForm = document.querySelector(".code__form");
   // verifyCodeForm.addEventListener("submit", (e) => {

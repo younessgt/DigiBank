@@ -109,7 +109,7 @@ class Mongodb():
         user = User.objects(email=email).first()
 
         if not user:
-            print('No user')
+            # print('No user')
             return None
 
         return user
@@ -287,6 +287,19 @@ class Mongodb():
         user.save()
         return user
     
+    def reset_password(self, email, new_password):
+        ''' reseting the password '''
+        
+        user = User.objects(email=email).first()
+        if not user:
+            return None
+        
+        password_bytes = new_password.encode('utf-8')
+        salt = bcrypt.gensalt()
+        updated_hashed_password = bcrypt.hashpw(password_bytes, salt)
+        user.hashed_password = updated_hashed_password.decode('utf-8')
+        user.save()
+        return user
     
     def update_profile_img(self, email, profile_img_path_db):
         '''updating user profile image'''

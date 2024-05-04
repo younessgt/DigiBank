@@ -2,6 +2,7 @@ import os
 import uuid
 import random
 import string
+import secrets
 from flask import (
     Flask,
     render_template,
@@ -164,7 +165,7 @@ def signup():
         'currency': currency
     }
     
-    print("email_verification_code: ", email_verification_code )
+    # print("email_verification_code: ", email_verification_code )
     # sending email Part
     email_msg_title = "Email Verification"
     sender = "noreplay@digibank.com"
@@ -303,6 +304,80 @@ def custom_static(filename):
     return send_from_directory('../profiles', filename)
 
 
+@app.route('/forgot-password', methods=['POST'], strict_slashes=False)
+def forgot_password():
+    ''' sending email with reset-password url '''
+    
+    email = request.form.get('email')
+    print(email)
+    user = db.get_user(email)
+    
+    if user is None:
+        return jsonify({'success': False})
+    
+    
+    # generating reset_link
+    
+    key = f'reset_{email}'
+    
+    token_value = rd.get(key)
+    if token_value and rd.get(token_value):
+        rd.del_key(key)
+        rd.del_key(token_value)
+    
+    token = secrets.token_urlsafe(32)
+    rd.set(key, token, 900)
+    rd.set(token, email, 900)
+    
+    reset_link = f"http://127.0.0.1:5000/reset-password/{token}"
+    
+    
+    # sending email Part
+    email_msg_title = "Reset Password"
+    sender = "noreplay@digibank.com"
+    email_msg = Message(email_msg_title, sender=sender, recipients=[email])
+    email_msg.body = ""
+    data = {
+        'username': user.username,
+        'reset_link': reset_link
+    }
+    email_msg.html = render_template('reset-password-email.html', data=data)
+    
+    try:
+        mail.send(email_msg)
+        print('Email send Successfully')
+    except Exception as e:
+        print(e)
+    return jsonify({"success": True})
+    
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'], strict_slashes=False)
+def reset_password(token):
+    ''' reseting the password'''
+      
+    email = rd.get(token)
+    key = f'reset_{email}'
+    if not email:
+        return render_template('invalid-url.html')
+    if request.method == 'POST':
+        
+        new_password = request.form.get('new_password')
+        # confirm_password = request.form.get('confirm_password')
+        user = db.reset_password(email, new_password)
+        if user:
+            rd.del_key(token)
+            rd.del_key(key)
+            
+        
+        return  jsonify({'success': True})
+    
+    return render_template("reset-password.html", token=token)
+        
+    
+# @app.route('/invalid-url')
+# def invalid_url():
+#     '''rendring ivalid url page'''
+#     return 
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -423,6 +423,9 @@
         <input type="email" id="signin-email" name="email" required />
         <label for="password">Password:</label>
         <input type="password" id="signin-password" name="password" required />
+        <a href="#" class="login__forgot">
+          Forgot Your Password?
+        </a>
         <button class="sgibtn">Sign in &rarr;</button>
       </form>
     </div>
@@ -465,6 +468,25 @@
           <input class="code" type="number" disabled />
         </div>
         <button class="verify_code">Verify</button>
+      </form>
+    </div>
+
+
+    <div class="modal4 hidden">
+      <button class="btn--close-modal4">&times;</button>
+      <h2 class="modal__header__forgot">
+        FORGOT
+        <span class="highlight-1">PASSWORD
+        </span>
+      </h2>
+
+      <div id="forgot-pass-err" class="flash__email" style="display: none"></div>
+      <form action="/forgot-password" method="post" class="modal__form forgot--pass--form">
+        
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <label for="email">Email</label>
+        <input type="email" id="forgot-email" name="email" placeholder="Please enter your email" required />
+        <button class="sgibtn">Submit &rarr;</button>
       </form>
     </div>
 
