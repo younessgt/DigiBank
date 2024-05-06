@@ -1,0 +1,45 @@
+version: "3"
+services:
+  redisDB:
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    container_name: redis-container
+
+  mongoDB:
+    image: mongo
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+
+  web_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/DigiBank:ro
+    ports:
+      - "5000:5000"
+    command: python3 -m web_dynamic.user-flask --host=127.0.0.1 --port=5000
+    depends_on:
+      - redisDB
+      - mongoDB
+
+  api_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/DigiBank:ro
+    ports:
+      - "5001:5001"
+    command: python3 -m api.v1.app
+    depends_on:
+      - redisDB
+      - mongoDB
+
+volumes:
+  mongo-data:
